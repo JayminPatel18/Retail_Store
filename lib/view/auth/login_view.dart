@@ -106,7 +106,7 @@ class LoginView extends GetWidget<AuthViewModel> {
                   if (_formKey.currentState!.validate()) {
                     controller.signInWithEmailAndPassword();
                   }
-                },
+                }
               ),
               SizedBox(
                 height: 20,
@@ -119,7 +119,7 @@ class LoginView extends GetWidget<AuthViewModel> {
                 height: 20,
               ),
               CustomButtonSocial(
-                text: "Sign In with Facebook",
+                text: "Sign In with Facebook ddghduhs",
                 imageName: "assets/images/facebook.png",
                 onPressed: () {
                   controller.facebookSignInMethod();
