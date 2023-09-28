@@ -29,115 +29,117 @@ class LoginView extends GetWidget<AuthViewModel> {
         key: _formKey,
         child: Padding(
           padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomText(
-                    text: "Welcome, ",
-                    fontSize: 30,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Get.to(RegisterView());
-                    },
-                    child: CustomText(
-                      text: "Sign Up",
-                      fontSize: 18,
-                      color: primaryColor,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomText(
+                      text: "Welcome, ",
+                      fontSize: 30,
                     ),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              CustomText(
-                text: "Sign in to Continue",
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              CustomeTextFormField(
-                text: "Email",
-                hint: "abcd@gmail.com",
-                onSave: (value) {
-                  controller.email = value;
-                },
-                validator: (value) {
-                  if (value == null) {
-                    print("Error you enter null please enter email id");
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(RegisterView());
+                      },
+                      child: CustomText(
+                        text: "Sign Up",
+                        fontSize: 18,
+                        color: primaryColor,
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                CustomText(
+                  text: "Sign in to Continue",
+                  fontSize: 14,
+                  color: Colors.grey,
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                CustomeTextFormField(
+                  text: "Email",
+                  hint: "abcd@gmail.com",
+                  onSave: (value) {
+                    controller.email = value;
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      print("Error you enter null please enter email id");
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                CustomeTextFormField(
+                  text: "Password",
+                  hint: "**********",
+                  onSave: (value) {
+                    controller.password = value;
+                  },
+                  validator: (value) {
+                    if (value == null) {
+                      print("Error you enter null please enter password");
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                CustomText(
+                  text: "Forgot Password",
+                  fontSize: 14,
+                  alignment: Alignment.topRight,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                CustomeButton(
+                  text: "SIGN IN",
+                  onPressed: () {
+                    _formKey.currentState!.save();
+                    if (_formKey.currentState!.validate()) {
+                      controller.signInWithEmailAndPassword();
+                    }
                   }
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              CustomeTextFormField(
-                text: "Password",
-                hint: "**********",
-                onSave: (value) {
-                  controller.password = value;
-                },
-                validator: (value) {
-                  if (value == null) {
-                    print("Error you enter null please enter password");
-                  }
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              CustomText(
-                text: "Forgot Password",
-                fontSize: 14,
-                alignment: Alignment.topRight,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              CustomeButton(
-                text: "SIGN IN",
-                onPressed: () {
-                  _formKey.currentState!.save();
-                  if (_formKey.currentState!.validate()) {
-                    controller.signInWithEmailAndPassword();
-                  }
-                }
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              CustomText(
-                text: "-OR-",
-                alignment: Alignment.center,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              CustomButtonSocial(
-                text: "Sign In with Facebook ddghduhs",
-                imageName: "assets/images/facebook.png",
-                onPressed: () {
-                  controller.facebookSignInMethod();
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              CustomButtonSocial(
-                text: "Sign In with Google",
-                onPressed: () {
-                  // GoogleSignIn
-                  AuthViewModel controller = Get.find<AuthViewModel>();
-                  controller.googleSignInMethod();
-                },
-                imageName: "assets/images/google.png",
-              )
-            ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                CustomText(
+                  text: "-OR-",
+                  alignment: Alignment.center,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                CustomButtonSocial(
+                  text: "Sign In with Facebook",
+                  imageName: "assets/images/facebook.png",
+                  onPressed: () {
+                    controller.facebookSignInMethod();
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                CustomButtonSocial(
+                  text: "Sign In with Google",
+                  onPressed: () {
+                    // GoogleSignIn
+                    AuthViewModel controller = Get.find<AuthViewModel>();
+                    controller.googleSignInMethod();
+                  },
+                  imageName: "assets/images/google.png",
+                )
+              ],
+            ),
           ),
         ),
       ),

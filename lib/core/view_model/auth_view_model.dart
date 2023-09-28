@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:retail_store/core/service/firestore_user.dart';
+import 'package:retail_store/model/user_model.dart';
 import 'package:retail_store/view/home_view.dart';
 
 class AuthViewModel extends GetxController {
@@ -50,7 +52,11 @@ class AuthViewModel extends GetxController {
       accessToken: googleSignInAuthentication.accessToken,
     );
 
-    await _auth.signInWithCredential(credential);
+    await _auth.signInWithCredential(credential).then((user) async{
+      saveUser(user);
+      // jump another page from get method
+      Get.offAll(HomeView());
+    });
   }
 
   // facebook sign in method
@@ -63,11 +69,15 @@ class AuthViewModel extends GetxController {
     if (result.status == FacebookLoginStatus.success) {
       final faceCredential = FacebookAuthProvider.credential(accessToken!);
 
-      await _auth.signInWithCredential(faceCredential);
+      await _auth.signInWithCredential(faceCredential).then((user) {
+        saveUser(user);
+        // jump another page from get method
+      Get.offAll(HomeView());
+      });
     }
   }
 
-  // sign in method
+  // sign in method with email
   void signInWithEmailAndPassword() async {
     try {
       await _auth
@@ -82,5 +92,40 @@ class AuthViewModel extends GetxController {
       Get.snackbar('Error Login Account', e.toString(),
           colorText: Colors.black, snackPosition: SnackPosition.BOTTOM);
     }
+  }
+
+  // sign up method with email
+  void createAccountWithEmailAndPassword() async {
+    try {
+      await _auth
+          .createUserWithEmailAndPassword(email: email!, password: password!)
+          .then((user) async {
+        print("Sign Up Successfully : $user");
+         
+        // store usrs in firestore database   collection "Users"
+        // await FirestoreUser().addUserToFirestore(UserModel(
+        //     userId: user.user?.uid,
+        //     email: user.user?.email,
+        //     name: name,
+        //     pic: ''));
+        saveUser(user);
+      });
+
+      // jump another page from get method
+      Get.offAll(HomeView());
+    } catch (e) {
+      print(e);
+      Get.snackbar('Error Sign up Account', e.toString(),
+          colorText: Colors.black, snackPosition: SnackPosition.BOTTOM);
+    }
+  }
+
+
+  void saveUser(UserCredential user) async{
+     await FirestoreUser().addUserToFirestore(UserModel(
+            userId: user.user?.uid,
+            email: user.user?.email,
+            name: name == null ? user.user?.displayName : name,   // this also for sign with facebook & google
+            pic: ''));
   }
 }

@@ -98,7 +98,7 @@ class RegisterView extends GetWidget<AuthViewModel> {
                 onPressed: () {
                   _formKey.currentState!.save();
                   if (_formKey.currentState!.validate()) {
-                    controller.signInWithEmailAndPassword();
+                    controller.createAccountWithEmailAndPassword();
                   }
                 },
               ),
