@@ -5,30 +5,24 @@ import 'package:retail_store/view/auth/profile_view.dart';
 import 'package:retail_store/view/home_view.dart';
 
 class HomeViewModel extends GetxController {
-  int _navigatorValue = 0;
-  get navigatorValue => _navigatorValue;
+  RxInt _navigatorValue = 0.obs;
+  RxInt get navigatorValue => _navigatorValue;
 
-  Widget _currentScreen = HomeView();
-  get currentScreen => _currentScreen;
+  Rx<Widget> _currentScreen = Rx<Widget>(HomeView());
+  Rx<Widget> get currentScreen => _currentScreen;
 
   void changeSelectedValue(int selectedValue) {
-    _navigatorValue = selectedValue;
+    _navigatorValue.value = selectedValue;
     switch (selectedValue) {
       case 0:
-        {
-          _currentScreen = HomeView();
-          break;
-        }
+        _currentScreen.value = HomeView();
+        break;
       case 1:
-        {
-          _currentScreen = CartView();
-          break;
-        }
+        _currentScreen.value = CartView();
+        break;
       case 2:
-        {
-          _currentScreen = ProfileView();
-          break;
-        }
+        _currentScreen.value = ProfileView();
+        break;
     }
     update();
   }

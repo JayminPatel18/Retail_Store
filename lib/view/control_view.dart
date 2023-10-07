@@ -8,13 +8,30 @@ class ControlView extends GetWidget<AuthViewModel> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      return (Get.find<AuthViewModel>().user == null)
-          ? LoginView()
-          : GetBuilder<HomeViewModel>(
-              builder: (controller) => Scaffold(
-                    body: controller.currentScreen,
-                    bottomNavigationBar: bottomNavigationBar(),
-                  ));
+      final user = controller.user;
+
+      if (user != null) {
+        // Register HomeViewModel before using it
+        Get.put(HomeViewModel()); // You may need to customize this according to your needs
+        final currentScreen = Get.find<HomeViewModel>().currentScreen.value;
+
+        if (currentScreen != null) {
+          return Scaffold(
+            body: currentScreen,
+            bottomNavigationBar: bottomNavigationBar(),
+          );
+        } else {
+          // Handle the case when currentScreen is null
+          return Scaffold(
+            body: Center(
+              child: Text("Error: Current screen is null."),
+            ),
+          );
+        }
+      }
+
+        return LoginView();
+      
     });
   }
 
@@ -48,7 +65,7 @@ class ControlView extends GetWidget<AuthViewModel> {
                 width: 20,
               ))
         ],
-        currentIndex: controller.navigatorValue,
+        currentIndex: controller.navigatorValue.value,
         onTap: (index) {
           controller.changeSelectedValue(index);
         },

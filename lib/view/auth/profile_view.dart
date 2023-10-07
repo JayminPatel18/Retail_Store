@@ -7,7 +7,7 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return  Scaffold(
       body: Center(
-        child: Text("Cart View"),
+        child: Text("Profile View"),
       ),
     );
   }
