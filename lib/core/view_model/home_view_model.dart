@@ -1,29 +1,46 @@
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:retail_store/view/auth/cart_view.dart';
-import 'package:retail_store/view/auth/profile_view.dart';
-import 'package:retail_store/view/home_view.dart';
+import 'package:retail_store/model/category_model.dart';
 
-class HomeViewModel extends GetxController {
-  RxInt _navigatorValue = 0.obs;
-  RxInt get navigatorValue => _navigatorValue;
+class HomeViewModel extends GetxController{
+  
+  ValueNotifier<bool> get loading => _loading;
+  ValueNotifier<bool> _loading = ValueNotifier(false);
+  
+  
+  List<CategoryModel> get categoryModel => _categoryModel;
+  List<CategoryModel> _categoryModel = [];
+  
+  final CollectionReference _categoryCollectionReference = FirebaseFirestore.instance.collection('Categories');
 
-  Rx<Widget> _currentScreen = Rx<Widget>(HomeView());
-  Rx<Widget> get currentScreen => _currentScreen;
+  HomeViewModel(){
+    getCategory();
+  }
 
-  void changeSelectedValue(int selectedValue) {
-    _navigatorValue.value = selectedValue;
-    switch (selectedValue) {
-      case 0:
-        _currentScreen.value = HomeView();
-        break;
-      case 1:
-        _currentScreen.value = CartView();
-        break;
-      case 2:
-        _currentScreen.value = ProfileView();
-        break;
+  getCategory() async{
+    _loading.value = true;
+   try {
+    final value = await _categoryCollectionReference.get();
+    if (value != null && value.docs.isNotEmpty) {
+      for (int i = 0; i < value.docs.length; i++) {
+        final categoryData = value.docs[i].data();
+        if (categoryData != null) {
+          final categoryMap = categoryData as Map<String, dynamic>;
+          final categoryModel = CategoryModel.fromJson(categoryMap);
+          _categoryModel.add(categoryModel);
+          print(categoryData);
+          print(_categoryModel.length);
+          _loading.value = false;
+        }
+      }
+      update();
+    } else {
+      print("No category data found.");
     }
-    update();
+  } catch (e, stackTrace) {
+    print("Error fetching category data: $e");
+    print("StackTrace: $stackTrace");
+  }
   }
 }

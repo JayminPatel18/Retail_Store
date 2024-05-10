@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:retail_store/core/view_model/home_view_model.dart';
+import 'package:retail_store/view/auth/login_view.dart';
 import 'package:retail_store/view/widgets/custom_text.dart';
 
 // ignore: must_be_immutable
@@ -16,48 +19,57 @@ class HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 80),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _searchTextFormField(),
-              SizedBox(
-                height: 20,
-              ),
-              CustomText(
-                text: "Categories",
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              _listViewCategory(),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CustomText(
-                    text: "Best Selling",
-                    fontSize: 18,
-                  ),
-                  CustomText(
-                    text: "See All",
-                    fontSize: 18,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              _listViewProduct()
-            ],
+    return GetBuilder<HomeViewModel>(
+      builder:(controller) => controller.loading.value ? Center(child: CircularProgressIndicator())
+      : Scaffold(
+        body: Container(
+          padding: EdgeInsets.only(left: 20, right: 20, top: 80),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _searchTextFormField(),
+                SizedBox(
+                  height: 20,
+                ),
+                CustomText(
+                  text: "Categories",
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                _listViewCategory(),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomText(
+                      text: "Best Selling",
+                      fontSize: 18,
+                    ),
+                    CustomText(
+                      text: "See All",
+                      fontSize: 18,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                _listViewProduct(),
+                ElevatedButton(
+                  onPressed: () {
+                    _auth.signOut();
+                    Get.offAll(LoginView());
+                  },
+                  child: Text("Logout"),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-      
     );
   }
 
@@ -77,36 +89,38 @@ class HomeView extends StatelessWidget {
   }
 
   Widget _listViewCategory() {
-    return Container(
-      height: 120,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: names.length,
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: Colors.grey.shade100),
-                height: 60,
-                width: 60,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.asset('assets/images/Icon_Mens Shoe.png'),
+    return GetBuilder<HomeViewModel>(
+      builder:(controller) => Container(
+        height: 120,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          itemCount: controller.categoryModel.length,
+          itemBuilder: (context, index) {
+            return Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: Colors.grey.shade100),
+                  height: 60,
+                  width: 60,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.network(controller.categoryModel[index].image),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              CustomText(
-                text: names[index],
-              )
-            ],
-          );
-        },
-        separatorBuilder: (context, index) => SizedBox(
-          width: 10,
+                SizedBox(
+                  height: 20,
+                ),
+                CustomText(
+                  text: controller.categoryModel[index].name,
+                )
+              ],
+            );
+          },
+          separatorBuilder: (context, index) => SizedBox(
+            width: 10,
+          ),
         ),
       ),
     );
@@ -166,8 +180,6 @@ class HomeView extends StatelessWidget {
       ),
     );
   }
-
-  
 }
 // for sign out method
 // ElevatedButton(
